@@ -29,5 +29,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Maven target directory
+/target/
