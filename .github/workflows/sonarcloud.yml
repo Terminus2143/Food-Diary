@@ -36,7 +36,7 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
+
         with:
           args: >
             -Dsonar.projectKey=Terminus2143_Food-Diary
