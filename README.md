@@ -2,7 +2,7 @@
 
 Food Diary is a Java application developed using Spring Boot and Maven. It is designed to track nutrition and manage a diary of food products and dishes.
 
-## Key Features
+## Key Features in the future
 - Add products with information on calories, proteins, fats, and carbohydrates.
 - Create dishes from a combination of added products.
 - Manage meals, including breakfast, lunch, and dinner.
@@ -42,27 +42,11 @@ Food Diary is a Java application developed using Spring Boot and Maven. It is de
 - `src/main/resources` — Application resources (e.g., configuration files).
 - `pom.xml` — Maven configuration file for managing dependencies.
 
-## How to Use
+## How to Use (planned)
 
 1. **Add a Product:** Users can add a product by specifying its name and nutritional information.
 2. **Create a Dish:** Users can create a dish by adding one or more products.
 3. **Add a Meal:** Dishes can be combined to add to meals.
 
-## Development
-
-If you want to contribute to the project:
-
-1. Fork the repository.
-2. Create a new branch for your changes:
-   ```bash
-   git checkout -b feature/your-feature
-   ```
-3. Make your changes and commit them:
-   ```bash
-   git commit -m "Description of changes"
-   ```
-4. Push the changes to your fork and create a Pull Request.
-
 ## Contact
 If you have any questions or suggestions, feel free to contact me via GitHub.
-
