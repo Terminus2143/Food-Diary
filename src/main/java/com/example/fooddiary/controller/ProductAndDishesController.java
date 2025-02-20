@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/food")
 public class ProductAndDishesController {
 
     @GetMapping(value = "/food-entry", produces = "application/json")
