@@ -40,37 +40,4 @@ public class Product {
     public String getProductName() {
         return productName;
     }
-
-    public double getProteins() {
-        return proteins;
-    }
-
-    public double getFats() {
-        return fats;
-    }
-
-    public double getCarbohydrates() {
-        return carbohydrates;
-    }
-
-    // Сеттеры
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public void setProteins(double proteins) {
-        this.proteins = proteins;
-    }
-
-    public void setFats(double fats) {
-        this.fats = fats;
-    }
-
-    public void setCarbohydrates(double carbohydrates) {
-        this.carbohydrates = carbohydrates;
-    }
 }

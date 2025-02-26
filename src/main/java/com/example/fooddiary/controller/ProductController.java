@@ -3,6 +3,7 @@ package com.example.fooddiary.controller;
 import com.example.fooddiary.exception.ProductNotFoundException;
 import com.example.fooddiary.model.Product;
 import com.example.fooddiary.service.ProductService;
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +27,15 @@ public class ProductController {
                         "Продукт с названием '" + productName + "' не найден"));
     }
 
-    @GetMapping(value = "/product/{id}", produces = "application/json")
+    @GetMapping(value = "/products/{id}", produces = "application/json")
     public Product getProductById(@PathVariable("id") int id) {
         return productService.getProductById(id)
                 .orElseThrow(() -> new ProductNotFoundException(
                         "Продукт с ID " + id + " не найден"));
+    }
+
+    @GetMapping(value = "/products", produces = "application/json")
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 }
