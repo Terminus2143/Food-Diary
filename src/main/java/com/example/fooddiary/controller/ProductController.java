@@ -22,12 +22,14 @@ public class ProductController {
     @GetMapping(value = "/food", produces = "application/json")
     public Product getProductByName(@RequestParam(name = "product") String productName) {
         return productService.getProductByName(productName)
-                .orElseThrow(() -> new ProductNotFoundException("Продукт с названием '" + productName + "' не найден"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Продукт с названием '" + productName + "' не найден"));
     }
 
     @GetMapping(value = "/product/{id}", produces = "application/json")
     public Product getProductById(@PathVariable("id") int id) {
         return productService.getProductById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Продукт с ID " + id + " не найден"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        "Продукт с ID " + id + " не найден"));
     }
 }
