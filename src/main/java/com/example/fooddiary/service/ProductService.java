@@ -11,7 +11,6 @@ public class ProductService {
     private final List<Product> products = new ArrayList<>();
 
     public ProductService() {
-        // Добавляем несколько продуктов
         products.add(new Product(1, "Яблоко", 0.3, 0.2, 14.0));
         products.add(new Product(2, "Банан", 1.1, 0.3, 23.0));
         products.add(new Product(3, "Куриное филе", 23.0, 1.5, 0.0));
