@@ -1,43 +1,34 @@
 package com.example.fooddiary.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Table(name = "products")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
 
-    @JsonIgnore
-    @JsonProperty("id")
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @JsonProperty("foodName")
-    private String productName;
+    @Column(nullable = false, unique = true)
+    @org.hibernate.annotations.ColumnTransformer(read = "LOWER(name)", write = "LOWER(?)")
+    private String name;
 
-    @JsonProperty("proteins")
     private double proteins;
-
-    @JsonProperty("fats")
     private double fats;
-
-    @JsonProperty("carbohydrates")
     private double carbohydrates;
-
-    public Product(int id,
-                   String productName,
-                   double proteins,
-                   double fats,
-                   double carbohydrates) {
-        this.id = id;
-        this.productName = productName;
-        this.proteins = proteins;
-        this.fats = fats;
-        this.carbohydrates = carbohydrates;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
+    private double calories;
 }

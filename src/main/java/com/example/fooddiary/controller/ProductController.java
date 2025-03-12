@@ -1,11 +1,16 @@
 package com.example.fooddiary.controller;
 
-import com.example.fooddiary.exception.ProductNotFoundException;
+import com.example.fooddiary.dto.ProductDto;
 import com.example.fooddiary.model.Product;
 import com.example.fooddiary.service.ProductService;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,22 +25,34 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(value = "/food", produces = "application/json")
-    public Product getProductByName(@RequestParam(name = "product") String productName) {
-        return productService.getProductByName(productName)
-                .orElseThrow(() -> new ProductNotFoundException(
-                        "Продукт с названием '" + productName + "' не найден"));
+    @PostMapping("/products")
+    public Product addProduct(@RequestBody ProductDto productDto) {
+        return productService.addProduct(productDto);
     }
 
-    @GetMapping(value = "/products/{id}", produces = "application/json")
-    public Product getProductById(@PathVariable("id") int id) {
-        return productService.getProductById(id)
-                .orElseThrow(() -> new ProductNotFoundException(
-                        "Продукт с ID " + id + " не найден"));
-    }
-
-    @GetMapping(value = "/products", produces = "application/json")
-    public List<Product> getAllProducts() {
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+        return productService.getProductById(id);
+    }
+
+    @GetMapping("/food")
+    public ResponseEntity<Product> getProductByName(@RequestParam String product) {
+        return productService.getProductByName(product);
+    }
+
+    @PutMapping("/products/{id}")
+    public Product updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) {
+        return productService.updateProduct(id, productDto);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }
