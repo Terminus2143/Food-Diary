@@ -40,7 +40,7 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    @GetMapping("/food")
+    @GetMapping("/food_high")
     public ResponseEntity<Product> getProductByName(@RequestParam String product) {
         return productService.getProductByName(product);
     }
