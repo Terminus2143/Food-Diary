@@ -18,8 +18,6 @@ public class ProductService {
     private static final String
             PRODUCT_EXISTENCE_MESSAGE = "Продукт с именем %s уже существует";
     private static final String
-            PRODUCTS_NOT_FOUND = "Продуктов не обнаружено";
-    private static final String
             PRODUCT_NOT_FOUND_MESSAGE_ID = "Продукт с ID %d не найден";
     private static final String
             PRODUCT_NOT_FOUND_MESSAGE_NAME = "Продукт с именем %s не найден";
@@ -45,9 +43,6 @@ public class ProductService {
 
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        if (products.isEmpty()) {
-            throw new NotFoundException(PRODUCTS_NOT_FOUND);
-        }
         return ResponseEntity.ok(products);
     }
 
@@ -75,6 +70,18 @@ public class ProductService {
 
         if (productDto.getName() != null) {
             product.setName(productDto.getName());
+        }
+        if (productDto.getProteins() != null) {
+            product.setProteins(productDto.getProteins());
+        }
+        if (productDto.getFats() != null) {
+            product.setFats(productDto.getFats());
+        }
+        if (productDto.getCarbohydrates() != null) {
+            product.setCarbohydrates(productDto.getCarbohydrates());
+        }
+        if (productDto.getCalories() != null) {
+            product.setCalories(productDto.getCalories());
         }
         try {
             return productRepository.save(product);

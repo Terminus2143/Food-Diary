@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class ProductDto {
     private String name;
-    private double proteins;
-    private double fats;
-    private double carbohydrates;
-    private double calories;
+    private Double proteins;
+    private Double fats;
+    private Double carbohydrates;
+    private Double calories;
 }

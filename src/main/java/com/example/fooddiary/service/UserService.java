@@ -4,7 +4,9 @@ import com.example.fooddiary.dto.UserDto;
 import com.example.fooddiary.exception.AlreadyExistsException;
 import com.example.fooddiary.exception.NotFoundException;
 import com.example.fooddiary.mapper.UserMapper;
+import com.example.fooddiary.model.Dish;
 import com.example.fooddiary.model.User;
+import com.example.fooddiary.repository.DishRepository;
 import com.example.fooddiary.repository.UserRepository;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,14 +22,19 @@ public class UserService {
     private static final String
             USER_EXISTENCE_MESSAGE = "Пользователь с таким именем или почтой уже существует";
     private static final String
-            USERS_NOT_FOUND = "Пользователей не обнаружено";
+            DISH_NOT_FOUND_MESSAGE_ID = "Блюдо с ID %d не найдено";
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final DishRepository dishRepository;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            DishRepository dishRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.dishRepository = dishRepository;
     }
 
     public User addUser(@RequestBody UserDto userDto) {
@@ -41,9 +48,6 @@ public class UserService {
 
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
-        if (users.isEmpty()) {
-            throw new NotFoundException(USERS_NOT_FOUND);
-        }
         return ResponseEntity.ok(users);
     }
 
@@ -94,5 +98,18 @@ public class UserService {
             );
         }
         userRepository.deleteById(id);
+    }
+
+    public ResponseEntity<List<Dish>> getUserDishes(Integer userId) {
+        List<Dish> dishes = dishRepository.findByUserId(userId);
+        return ResponseEntity.ok(dishes);
+    }
+
+    public ResponseEntity<Dish> getUserDishById(Integer userId, Integer dishId) {
+        Dish dish = dishRepository.findByIdAndUserId(dishId, userId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(DISH_NOT_FOUND_MESSAGE_ID, dishId)
+                ));
+        return ResponseEntity.ok(dish);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.fooddiary.controller;
 
+import com.example.fooddiary.dto.DishDto;
 import com.example.fooddiary.dto.UserDto;
+import com.example.fooddiary.model.Dish;
 import com.example.fooddiary.model.User;
 import com.example.fooddiary.service.UserService;
 import java.util.List;
@@ -48,5 +50,15 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users/{userId}/dishes")
+    public ResponseEntity<List<Dish>> getUserDishes(@PathVariable Integer userId) {
+        return userService.getUserDishes(userId);
+    }
+
+    @GetMapping("/users/{userId}/dishes/{dishId}")
+    public ResponseEntity<Dish> getUserDishById(@PathVariable Integer userId, @PathVariable Integer dishId) {
+        return userService.getUserDishById(userId, dishId);
     }
 }

@@ -27,8 +27,8 @@ public class Product {
     @org.hibernate.annotations.ColumnTransformer(read = "LOWER(name)", write = "LOWER(?)")
     private String name;
 
-    private double proteins;
-    private double fats;
-    private double carbohydrates;
-    private double calories;
+    private Double proteins;
+    private Double fats;
+    private Double carbohydrates;
+    private Double calories;
 }

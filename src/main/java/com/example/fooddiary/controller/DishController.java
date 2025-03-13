@@ -31,18 +31,18 @@ public class DishController {
     }
 
     @GetMapping("/dishes")
-    public ResponseEntity<List<Dish>> getAllDishs() {
-        return dishService.getAllDishs();
+    public ResponseEntity<List<DishDto>> getAllDishes() {
+        return dishService.getAllDishes();
     }
 
     @GetMapping("/dishes/{id}")
-    public ResponseEntity<Dish> getDishById(@PathVariable Integer id) {
+    public ResponseEntity<DishDto> getDishById(@PathVariable Integer id) {
         return dishService.getDishById(id);
     }
 
-    @GetMapping("/food_dish")
-    public ResponseEntity<Dish> getDishByName(@RequestParam String dish) {
-        return dishService.getDishByName(dish);
+    @GetMapping("/dish")
+    public ResponseEntity<DishDto> getDishByName(@RequestParam String name) {
+        return dishService.getDishByName(name);
     }
 
     @PutMapping("/dishes/{id}")

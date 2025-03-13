@@ -7,23 +7,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class DishMapper {
 
-    public DishDto toDto(Dish user) {
-        DishDto userDto = new DishDto();
-        userDto.setName(user.getName());
-        userDto.setProteins(user.getProteins());
-        userDto.setFats(user.getFats());
-        userDto.setCarbohydrates(user.getCarbohydrates());
-        userDto.setCalories(user.getCalories());
-        return userDto;
+    public DishDto toDto(Dish dish) {
+        DishDto dishDto = new DishDto();
+        dishDto.setName(dish.getName());
+        dishDto.setProteins(dish.getProteins());
+        dishDto.setFats(dish.getFats());
+        dishDto.setCarbohydrates(dish.getCarbohydrates());
+        dishDto.setCalories(dish.getCalories());
+        dishDto.setUserId(dish.getUser().getId());
+        return dishDto;
     }
 
-    public Dish toEntity(DishDto userDto) {
-        Dish user = new Dish();
-        user.setName(userDto.getName());
-        user.setProteins(userDto.getProteins());
-        user.setFats(userDto.getFats());
-        user.setCarbohydrates(userDto.getCarbohydrates());
-        user.setCalories(userDto.getCalories());
-        return user;
+    public Dish toEntity(DishDto dishDto) {
+        Dish dish = new Dish();
+        dish.setName(dishDto.getName());
+        dish.setProteins(dishDto.getProteins());
+        dish.setFats(dishDto.getFats());
+        dish.setCarbohydrates(dishDto.getCarbohydrates());
+        dish.setCalories(dishDto.getCalories());
+        return dish;
     }
 }
