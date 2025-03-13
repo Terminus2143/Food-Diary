@@ -1,6 +1,5 @@
 package com.example.fooddiary.controller;
 
-import com.example.fooddiary.dto.DishDto;
 import com.example.fooddiary.dto.UserDto;
 import com.example.fooddiary.model.Dish;
 import com.example.fooddiary.model.User;
