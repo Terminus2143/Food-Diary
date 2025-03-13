@@ -6,9 +6,9 @@ import com.example.fooddiary.mapper.DishMapper;
 import com.example.fooddiary.model.Dish;
 import com.example.fooddiary.model.User;
 import com.example.fooddiary.repository.DishRepository;
+import com.example.fooddiary.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
-import com.example.fooddiary.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +27,10 @@ public class DishService {
     private final UserRepository userRepository;
     private final DishMapper dishMapper;
 
-    public DishService(DishRepository dishRepository,UserRepository userRepository, DishMapper dishMapper) {
+    public DishService(
+            DishRepository dishRepository,
+            UserRepository userRepository,
+            DishMapper dishMapper) {
         this.dishRepository = dishRepository;
         this.userRepository = userRepository;
         this.dishMapper = dishMapper;

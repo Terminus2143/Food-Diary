@@ -50,10 +50,7 @@ public class User {
     @JsonIgnore
     @OneToMany(
             mappedBy = "user",
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-                    CascadeType.REMOVE},
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<Dish> dishes = new ArrayList<>();

@@ -58,7 +58,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}/dishes/{dishId}")
-    public ResponseEntity<Dish> getUserDishById(@PathVariable Integer userId, @PathVariable Integer dishId) {
+    public ResponseEntity<Dish> getUserDishById(
+            @PathVariable Integer userId,
+            @PathVariable Integer dishId
+    ) {
         return userService.getUserDishById(userId, dishId);
     }
 }

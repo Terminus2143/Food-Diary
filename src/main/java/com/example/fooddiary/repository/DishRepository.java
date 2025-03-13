@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DishRepository extends JpaRepository<Dish, Integer> {
     Optional<Dish> findByName(String dishName);
+
     List<Dish> findByUserId(Integer userId);
+
     Optional<Dish> findByIdAndUserId(Integer id, Integer userId);
 }
