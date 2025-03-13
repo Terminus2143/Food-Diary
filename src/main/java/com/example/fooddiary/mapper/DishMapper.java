@@ -9,6 +9,7 @@ public class DishMapper {
 
     public DishDto toDto(Dish dish) {
         DishDto dishDto = new DishDto();
+        dishDto.setId(dish.getId());
         dishDto.setName(dish.getName());
         dishDto.setProteins(dish.getProteins());
         dishDto.setFats(dish.getFats());

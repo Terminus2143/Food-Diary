@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class DishDto {
+    private Integer id;
     private String name;
     private Double proteins;
     private Double fats;
