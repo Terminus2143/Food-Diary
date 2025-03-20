@@ -1,6 +1,5 @@
 package com.example.fooddiary.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,7 +46,6 @@ public class User {
     @Column(nullable = false)
     private String gender;
 
-    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},

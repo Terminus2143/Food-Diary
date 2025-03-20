@@ -1,12 +1,17 @@
 package com.example.fooddiary.service;
 
+import com.example.fooddiary.cache.ProductCache;
 import com.example.fooddiary.dto.ProductDto;
 import com.example.fooddiary.exception.AlreadyExistsException;
 import com.example.fooddiary.exception.NotFoundException;
 import com.example.fooddiary.mapper.ProductMapper;
+import com.example.fooddiary.model.Dish;
 import com.example.fooddiary.model.Product;
+import com.example.fooddiary.repository.DishRepository;
 import com.example.fooddiary.repository.ProductRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,16 +29,27 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final DishRepository dishRepository;
+    private final ProductCache productCache;
 
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
+    public ProductService(
+            ProductRepository productRepository,
+            ProductMapper productMapper,
+            DishRepository dishRepository,
+            ProductCache productCache
+    ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.dishRepository = dishRepository;
+        this.productCache = productCache;
     }
 
     public Product addProduct(@RequestBody ProductDto productDto) {
         try {
             Product product = productMapper.toEntity(productDto);
-            return productRepository.save(product);
+            product = productRepository.save(product);
+            productCache.put((long) product.getId(), product);
+            return product;
         } catch (DataIntegrityViolationException ex) {
             throw new AlreadyExistsException(
                     String.format(PRODUCT_EXISTENCE_MESSAGE, productDto.getName())
@@ -47,10 +63,15 @@ public class ProductService {
     }
 
     public ResponseEntity<Product> getProductById(Integer id) {
-        Product product = productRepository.findById(id)
+        Product product = productCache.get((long) id);
+        if (product != null) {
+            return ResponseEntity.ok(product);
+        }
+        product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(PRODUCT_NOT_FOUND_MESSAGE_ID, id)
                 ));
+        productCache.put((long) id, product);
         return ResponseEntity.ok(product);
     }
 
@@ -59,6 +80,7 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format(PRODUCT_NOT_FOUND_MESSAGE_NAME, name)
                 ));
+        productCache.put((long) product.getId(), product);
         return ResponseEntity.ok(product);
     }
 
@@ -84,7 +106,9 @@ public class ProductService {
             product.setCalories(productDto.getCalories());
         }
         try {
-            return productRepository.save(product);
+            product = productRepository.save(product);
+            productCache.put((long) id, product);
+            return product;
         } catch (DataIntegrityViolationException ex) {
             throw new AlreadyExistsException(
                     String.format(PRODUCT_EXISTENCE_MESSAGE, productDto.getName())
@@ -92,12 +116,20 @@ public class ProductService {
         }
     }
 
-    public void deleteProduct(Integer id) {
-        if (!productRepository.existsById(id)) {
-            throw new NotFoundException(
-                    String.format(PRODUCT_NOT_FOUND_MESSAGE_ID, id)
-            );
+    public void deleteProduct(Integer productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            List<Dish> dishes = new ArrayList<>(product.getDishes());
+
+            for (Dish dish : dishes) {
+                dishRepository.delete(dish);
+            }
+
+            productCache.remove((long) productId);
+            productRepository.delete(product);
+        } else {
+            throw new NotFoundException("Продукт не найден с ID: " + productId);
         }
-        productRepository.deleteById(id);
     }
 }

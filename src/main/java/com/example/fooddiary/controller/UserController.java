@@ -35,6 +35,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/users/dishes")
+    public ResponseEntity<List<User>> getAllUsersWithDishes() {
+        return userService.getAllUsersWithDishes();
+    }
+
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);

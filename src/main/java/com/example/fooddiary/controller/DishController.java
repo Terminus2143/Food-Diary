@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,24 +24,24 @@ public class DishController {
         this.dishService = dishService;
     }
 
-    @PostMapping("/dishes")
-    public Dish addDish(@RequestBody DishDto dishDto) {
-        return dishService.addDish(dishDto);
+    @PostMapping("/users/{userId}/dishes")
+    public ResponseEntity<Dish> addDish(
+            @PathVariable Integer userId,
+            @RequestBody DishDto dishDto
+    ) {
+        return dishService.addDish(userId, dishDto);
     }
 
     @GetMapping("/dishes")
-    public ResponseEntity<List<DishDto>> getAllDishes() {
-        return dishService.getAllDishes();
+    public ResponseEntity<List<Dish>> getAllDishes() {
+        List<Dish> dishes = dishService.getAllDishes();
+        return ResponseEntity.ok(dishes);
     }
 
     @GetMapping("/dishes/{id}")
-    public ResponseEntity<DishDto> getDishById(@PathVariable Integer id) {
-        return dishService.getDishById(id);
-    }
-
-    @GetMapping("/dish")
-    public ResponseEntity<DishDto> getDishByName(@RequestParam String name) {
-        return dishService.getDishByName(name);
+    public ResponseEntity<Dish> getDishById(@PathVariable Integer id) {
+        Dish dish = dishService.getDishById(id);
+        return ResponseEntity.ok(dish);
     }
 
     @PutMapping("/dishes/{id}")
@@ -54,5 +53,10 @@ public class DishController {
     public ResponseEntity<Void> deleteDish(@PathVariable Integer id) {
         dishService.deleteDish(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Dish>> getDishesByUserIdNative(@PathVariable Integer userId) {
+        return ResponseEntity.ok(dishService.getAllDishesByUserIdNative(userId));
     }
 }
