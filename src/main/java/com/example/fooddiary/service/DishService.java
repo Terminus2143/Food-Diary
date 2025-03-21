@@ -145,7 +145,6 @@ public class DishService {
                 }
                 Product product = optionalProduct.get();
                 products.add(product);
-
                 totalProteins += product.getProteins();
                 totalFats += product.getFats();
                 totalCarbohydrates += product.getCarbohydrates();

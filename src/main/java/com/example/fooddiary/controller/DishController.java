@@ -55,7 +55,7 @@ public class DishController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/dishes-by-user/{userId}")
     public ResponseEntity<List<Dish>> getDishesByUserIdNative(@PathVariable Integer userId) {
         return ResponseEntity.ok(dishService.getAllDishesByUserIdNative(userId));
     }
