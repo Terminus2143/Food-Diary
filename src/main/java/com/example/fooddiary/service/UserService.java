@@ -1,5 +1,6 @@
 package com.example.fooddiary.service;
 
+import com.example.fooddiary.cache.UserCache;
 import com.example.fooddiary.dto.UserDto;
 import com.example.fooddiary.exception.AlreadyExistsException;
 import com.example.fooddiary.exception.NotFoundException;
@@ -27,20 +28,25 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final DishRepository dishRepository;
+    private final UserCache userCache;
 
     public UserService(
             UserRepository userRepository,
             UserMapper userMapper,
-            DishRepository dishRepository) {
+            DishRepository dishRepository,
+            UserCache userCache) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.dishRepository = dishRepository;
+        this.userCache = userCache;
     }
 
     public User addUser(@RequestBody UserDto userDto) {
         try {
             User user = userMapper.toEntity(userDto);
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+            userCache.put(savedUser.getId().longValue(), savedUser);
+            return savedUser;
         } catch (DataIntegrityViolationException ex) {
             throw new AlreadyExistsException(USER_EXISTENCE_MESSAGE);
         }
@@ -58,10 +64,17 @@ public class UserService {
     }
 
     public ResponseEntity<User> getUserById(Integer id) {
+        User cachedUser = userCache.get(id.longValue());
+        if (cachedUser != null) {
+            return ResponseEntity.ok(cachedUser);
+        }
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(USER_NOT_FOUND_MESSAGE_ID, id)
                 ));
+
+        userCache.put(user.getId().longValue(), user);
         return ResponseEntity.ok(user);
     }
 
@@ -91,7 +104,9 @@ public class UserService {
         }
 
         try {
-            return userRepository.save(user);
+            User updatedUser = userRepository.save(user);
+            userCache.put(updatedUser.getId().longValue(), updatedUser);
+            return updatedUser;
         } catch (DataIntegrityViolationException ex) {
             throw new AlreadyExistsException(USER_EXISTENCE_MESSAGE);
         }
@@ -104,6 +119,7 @@ public class UserService {
             );
         }
         userRepository.deleteById(id);
+        userCache.remove(id.longValue());
     }
 
     public ResponseEntity<List<Dish>> getUserDishes(Integer userId) {

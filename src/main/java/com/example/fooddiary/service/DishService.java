@@ -1,5 +1,6 @@
 package com.example.fooddiary.service;
 
+import com.example.fooddiary.cache.DishCache;
 import com.example.fooddiary.dto.DishDto;
 import com.example.fooddiary.exception.NotFoundException;
 import com.example.fooddiary.model.Dish;
@@ -33,15 +34,18 @@ public class DishService {
     private final DishRepository dishRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final DishCache dishCache;
 
     public DishService(
             DishRepository dishRepository,
             UserRepository userRepository,
-            ProductRepository productRepository
+            ProductRepository productRepository,
+            DishCache dishCache
     ) {
         this.dishRepository = dishRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.dishCache = dishCache;
     }
 
     private User findUserById(Integer userId) {
@@ -96,7 +100,7 @@ public class DishService {
         updateDishNutrients(dish, products);
         dish.setProducts(products);
         dish = dishRepository.save(dish);
-
+        dishCache.put((long) dish.getId(), dish);
         return ResponseEntity.ok(dish);
     }
 
@@ -109,9 +113,17 @@ public class DishService {
     }
 
     public Dish getDishById(Integer id) {
-        return dishRepository.findById(id)
+        Dish cachedDish = dishCache.get((long) id);
+        if (cachedDish != null) {
+            return cachedDish;
+        }
+
+        Dish dish = dishRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
                         String.format(DISH_NOT_FOUND_MESSAGE_ID, id)));
+
+        dishCache.put((long) id, dish);
+        return dish;
     }
 
     public Dish updateDish(Integer id, @RequestBody DishDto dishDto) {
@@ -126,12 +138,15 @@ public class DishService {
             updateDishNutrients(dish, products);
             dish.setProducts(products);
         }
+        Dish updatedDish = dishRepository.save(dish);
 
-        return dishRepository.save(dish);
+        dishCache.put((long) id, updatedDish);
+        return updatedDish;
     }
 
     public void deleteDish(Integer dishId) {
         dishRepository.deleteById(dishId);
+        dishCache.remove((long) dishId);
     }
 
     public List<Dish> getAllDishesByUserIdNative(Integer userId) {
