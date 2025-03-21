@@ -44,49 +44,56 @@ public class DishService {
         this.productRepository = productRepository;
     }
 
-    public ResponseEntity<Dish> addDish(Integer userId, DishDto dishDto) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new NotFoundException(
-                    String.format(USER_NOT_FOUND_MESSAGE_ID, userId)
-            );
-        }
+    private User findUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(USER_NOT_FOUND_MESSAGE_ID, userId)));
+    }
 
-        Dish dish = new Dish();
-        dish.setName(dishDto.getName());
-        dish.setUser(optionalUser.get());
+    private Product findProductByName(String productName) {
+        return productRepository.findByName(productName)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(PRODUCT_NOT_FOUND_MESSAGE, productName)));
+    }
 
-        Set<Product> products = new HashSet<>();
-        double totalProteins = 0.0;
-        double totalFats = 0.0;
-        double totalCarbohydrates = 0.0;
-        double totalCalories = 0.0;
-
-        for (String productName : dishDto.getProductNames()) {
-            Optional<Product> optionalProduct = productRepository.findByName(productName);
-            if (optionalProduct.isEmpty()) {
-                throw new NotFoundException(
-                        String.format(PRODUCT_NOT_FOUND_MESSAGE, productName)
-                );
-            }
-            Product product = optionalProduct.get();
-            products.add(product);
-            totalProteins += product.getProteins();
-            totalFats += product.getFats();
-            totalCarbohydrates += product.getCarbohydrates();
-            totalCalories += product.getCalories();
-        }
-
+    private void updateDishNutrients(Dish dish, Set<Product> products) {
         if (products.isEmpty()) {
             throw new IllegalArgumentException(DISHES_CONTAINMENT_MESSAGE);
         }
+
+        double totalProteins = products.stream().mapToDouble(Product::getProteins).sum();
+        double totalFats = products.stream().mapToDouble(Product::getFats).sum();
+        double totalCarbohydrates = products.stream().mapToDouble(Product::getCarbohydrates).sum();
+        double totalCalories = products.stream().mapToDouble(Product::getCalories).sum();
 
         int productCount = products.size();
         dish.setProteins(totalProteins / productCount);
         dish.setFats(totalFats / productCount);
         dish.setCarbohydrates(totalCarbohydrates / productCount);
         dish.setCalories(totalCalories / productCount);
+    }
 
+    private void updateDishFromDto(Dish dish, DishDto dishDto) {
+        Optional.ofNullable(dishDto.getName()).ifPresent(dish::setName);
+        Optional.ofNullable(dishDto.getProteins()).ifPresent(dish::setProteins);
+        Optional.ofNullable(dishDto.getFats()).ifPresent(dish::setFats);
+        Optional.ofNullable(dishDto.getCarbohydrates()).ifPresent(dish::setCarbohydrates);
+        Optional.ofNullable(dishDto.getCalories()).ifPresent(dish::setCalories);
+    }
+
+    public ResponseEntity<Dish> addDish(Integer userId, DishDto dishDto) {
+        User user = findUserById(userId);
+
+        Dish dish = new Dish();
+        dish.setName(dishDto.getName());
+        dish.setUser(user);
+
+        Set<Product> products = new HashSet<>();
+        for (String productName : dishDto.getProductNames()) {
+            products.add(findProductByName(productName));
+        }
+
+        updateDishNutrients(dish, products);
         dish.setProducts(products);
         dish = dishRepository.save(dish);
 
@@ -108,57 +115,18 @@ public class DishService {
     }
 
     public Dish updateDish(Integer id, @RequestBody DishDto dishDto) {
-
-        Dish dish = dishRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format(DISH_NOT_FOUND_MESSAGE_ID, id)
-                ));
-
-        if (dishDto.getName() != null) {
-            dish.setName(dishDto.getName());
-        }
-        if (dishDto.getProteins() != null) {
-            dish.setProteins(dishDto.getProteins());
-        }
-        if (dishDto.getFats() != null) {
-            dish.setFats(dishDto.getFats());
-        }
-        if (dishDto.getCarbohydrates() != null) {
-            dish.setCarbohydrates(dishDto.getCarbohydrates());
-        }
-        if (dishDto.getCalories() != null) {
-            dish.setCalories(dishDto.getCalories());
-        }
+        Dish dish = getDishById(id);
+        updateDishFromDto(dish, dishDto);
 
         if (dishDto.getProductNames() != null) {
             Set<Product> products = new HashSet<>();
-            double totalProteins = 0;
-            double totalFats = 0;
-            double totalCarbohydrates = 0;
-            double totalCalories = 0;
-
             for (String productName : dishDto.getProductNames()) {
-                Optional<Product> optionalProduct = productRepository.findByName(productName);
-                if (optionalProduct.isEmpty()) {
-                    throw new NotFoundException(
-                            String.format(PRODUCT_NOT_FOUND_MESSAGE, productName));
-                }
-                Product product = optionalProduct.get();
-                products.add(product);
-                totalProteins += product.getProteins();
-                totalFats += product.getFats();
-                totalCarbohydrates += product.getCarbohydrates();
-                totalCalories += product.getCalories();
+                products.add(findProductByName(productName));
             }
-            int productCount = products.size();
-            if (productCount > 0) {
-                dish.setProteins(totalProteins / productCount);
-                dish.setFats(totalFats / productCount);
-                dish.setCarbohydrates(totalCarbohydrates / productCount);
-                dish.setCalories(totalCalories / productCount);
-            }
+            updateDishNutrients(dish, products);
             dish.setProducts(products);
         }
+
         return dishRepository.save(dish);
     }
 
