@@ -12,9 +12,12 @@ public interface DishRepository extends JpaRepository<Dish, Integer> {
 
     Optional<Dish> findByIdAndUserId(Integer id, Integer userId);
 
-    @Query("SELECT d FROM Dish d WHERE d.user.id = :userId")
-    List<Dish> findAllByUserIdJpql(@Param("userId") Integer userId);
+    @Query("SELECT d FROM Dish d JOIN d.products p WHERE LOWER(p.name) = LOWER(:productName)")
+    List<Dish> findDishesByProductName(@Param("productName") String productName);
 
-    @Query(value = "SELECT * FROM dishes WHERE user_id = :userId", nativeQuery = true)
-    List<Dish> findAllByUserIdNative(@Param("userId") Integer userId);
+    @Query(value = "SELECT d.* FROM dishes d "
+            + "JOIN dish_products dp ON d.id = dp.dish_id "
+            + "JOIN products p ON dp.product_id = p.id "
+            + "WHERE LOWER(p.name) = LOWER(:productName)", nativeQuery = true)
+    List<Dish> findDishesByProductNameNative(@Param("productName") String productName);
 }

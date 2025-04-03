@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class DishService {
@@ -93,8 +92,10 @@ public class DishService {
         dish.setUser(user);
 
         Set<Product> products = new HashSet<>();
-        for (String productName : dishDto.getProductNames()) {
-            products.add(findProductByName(productName));
+        if (dishDto.getProductNames() != null) {
+            for (String productName : dishDto.getProductNames()) {
+                products.add(findProductByName(productName));
+            }
         }
 
         updateDishNutrients(dish, products);
@@ -126,14 +127,16 @@ public class DishService {
         return dish;
     }
 
-    public Dish updateDish(Integer id, @RequestBody DishDto dishDto) {
+    public Dish updateDish(Integer id, DishDto dishDto) {
         Dish dish = getDishById(id);
         updateDishFromDto(dish, dishDto);
 
         if (dishDto.getProductNames() != null) {
             Set<Product> products = new HashSet<>();
-            for (String productName : dishDto.getProductNames()) {
-                products.add(findProductByName(productName));
+            if (dishDto.getProductNames() != null) {
+                for (String productName : dishDto.getProductNames()) {
+                    products.add(findProductByName(productName));
+                }
             }
             updateDishNutrients(dish, products);
             dish.setProducts(products);
@@ -149,8 +152,8 @@ public class DishService {
         dishCache.remove((long) dishId);
     }
 
-    public List<Dish> getAllDishesByUserIdNative(Integer userId) {
-        List<Dish> dishes = dishRepository.findAllByUserIdNative(userId);
+    public List<Dish> findDishesByProductNameNative(String productName) {
+        List<Dish> dishes = dishRepository.findDishesByProductNameNative(productName);
         if (dishes.isEmpty()) {
             throw new NotFoundException(DISHES_NOT_FOUND_MESSAGE);
         }

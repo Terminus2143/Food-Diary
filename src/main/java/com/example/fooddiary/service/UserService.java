@@ -57,12 +57,6 @@ public class UserService {
         return ResponseEntity.ok(users);
     }
 
-    public ResponseEntity<List<User>> getAllUsersWithDishes() {
-        List<User> users = userRepository.findAll();
-        users.forEach(user -> user.getDishes().forEach(dish -> {}));
-        return ResponseEntity.ok(users);
-    }
-
     public ResponseEntity<User> getUserById(Integer id) {
         User cachedUser = userCache.get(id.longValue());
         if (cachedUser != null) {

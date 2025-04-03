@@ -1,5 +1,6 @@
 package com.example.fooddiary.service;
 
+import com.example.fooddiary.cache.DishCache;
 import com.example.fooddiary.cache.ProductCache;
 import com.example.fooddiary.dto.ProductDto;
 import com.example.fooddiary.exception.AlreadyExistsException;
@@ -31,17 +32,20 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final DishRepository dishRepository;
     private final ProductCache productCache;
+    private final DishCache dishCache;
 
     public ProductService(
             ProductRepository productRepository,
             ProductMapper productMapper,
             DishRepository dishRepository,
-            ProductCache productCache
+            ProductCache productCache,
+            DishCache dishCache
     ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.dishRepository = dishRepository;
         this.productCache = productCache;
+        this.dishCache = dishCache;
     }
 
     public Product addProduct(@RequestBody ProductDto productDto) {
@@ -123,13 +127,14 @@ public class ProductService {
             List<Dish> dishes = new ArrayList<>(product.getDishes());
 
             for (Dish dish : dishes) {
-                dishRepository.delete(dish);
+                dishCache.remove((long) dish.getId());
             }
+            dishRepository.deleteAll(dishes);
 
             productCache.remove((long) productId);
             productRepository.delete(product);
         } else {
-            throw new NotFoundException("Продукт не найден с ID: " + productId);
+            throw new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE_ID + productId);
         }
     }
 }
