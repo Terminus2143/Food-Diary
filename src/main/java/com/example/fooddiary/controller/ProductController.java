@@ -37,6 +37,14 @@ public class ProductController {
         return productService.addProduct(productDto);
     }
 
+    @PostMapping("/bulk")
+    @Operation(
+            summary = "Добавить продукты",
+            description = "Добавляет продукты с указанными параметрами")
+    public List<Product> addProducts(@Valid @RequestBody List<ProductDto> productsDto) {
+        return productService.addProducts(productsDto);
+    }
+
     @GetMapping("/products")
     @Operation(
             summary = "Получить все продукты",

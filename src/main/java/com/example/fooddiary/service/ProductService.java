@@ -12,7 +12,10 @@ import com.example.fooddiary.repository.DishRepository;
 import com.example.fooddiary.repository.ProductRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,51 @@ public class ProductService {
         } catch (DataIntegrityViolationException ex) {
             throw new AlreadyExistsException(
                     String.format(PRODUCT_EXISTENCE_MESSAGE, productDto.getName())
+            );
+        }
+    }
+
+    public List<Product> addProducts(List<ProductDto> productsDto) {
+        Map<String, Long> nameCounts = productsDto.stream()
+                .collect(Collectors.groupingBy(ProductDto::getName, Collectors.counting()));
+
+        List<String> duplicateNames = nameCounts.entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if (!duplicateNames.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("В запросе присутствуют повторяющиеся имена продуктов: %s", duplicateNames)
+            );
+        }
+
+        List<String> existingNames = productsDto.stream()
+                .map(ProductDto::getName)
+                .filter(productRepository::existsByName)
+                .toList();
+
+        if (!existingNames.isEmpty()) {
+            throw new AlreadyExistsException(
+                    String.format("Продукты с именами %s уже существуют", existingNames)
+            );
+        }
+
+        try {
+            List<Product> products = productsDto.stream()
+                    .map(productMapper::toEntity)
+                    .toList();
+
+            List<Product> savedProducts = productRepository.saveAll(products);
+
+            savedProducts.forEach(product ->
+                    productCache.put((long) product.getId(), product)
+            );
+
+            return savedProducts;
+        } catch (DataIntegrityViolationException ex) {
+            throw new AlreadyExistsException(
+                    String.format(PRODUCT_EXISTENCE_MESSAGE, "(один или несколько продуктов)")
             );
         }
     }

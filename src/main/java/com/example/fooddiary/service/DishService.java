@@ -59,7 +59,7 @@ public class DishService {
                         String.format(PRODUCT_NOT_FOUND_MESSAGE, productName)));
     }
 
-    private void updateDishNutrients(Dish dish, Set<Product> products) {
+    public void updateDishNutrients(Dish dish, Set<Product> products) {
         if (products.isEmpty()) {
             throw new IllegalArgumentException(DISHES_CONTAINMENT_MESSAGE);
         }
@@ -76,7 +76,7 @@ public class DishService {
         dish.setCalories(totalCalories / productCount);
     }
 
-    private void updateDishFromDto(Dish dish, DishDto dishDto) {
+    public void updateDishFromDto(Dish dish, DishDto dishDto) {
         Optional.ofNullable(dishDto.getName()).ifPresent(dish::setName);
         Optional.ofNullable(dishDto.getProteins()).ifPresent(dish::setProteins);
         Optional.ofNullable(dishDto.getFats()).ifPresent(dish::setFats);
