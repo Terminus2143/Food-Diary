@@ -26,13 +26,13 @@ public class LoggingAspect {
     @AfterReturning(pointcut = "execution(* com.example.fooddiary..*(..))", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         if (logger.isDebugEnabled()) {
-            if (result instanceof ResponseEntity<?> responseEntity &&
-                    (responseEntity.getStatusCode().is4xxClientError() ||
-                        responseEntity.getStatusCode().is5xxServerError())) {
-                    logger.error("Исключение в: {} по причине: {}",
-                            joinPoint.getSignature().toShortString(), result);
-                    return;
-                }
+            if (result instanceof ResponseEntity<?> responseEntity
+                    && (responseEntity.getStatusCode().is4xxClientError()
+                    ||  responseEntity.getStatusCode().is5xxServerError())) {
+                logger.error("Исключение в: {} по причине: {}",
+                    joinPoint.getSignature().toShortString(), result);
+                return;
+            }
             logger.info("Выполнение: {} с результатом: {}",
                     joinPoint.getSignature().toShortString(), result);
         }

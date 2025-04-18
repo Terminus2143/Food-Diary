@@ -29,6 +29,10 @@
 	<properties>
 		<java.version>17</java.version>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.organization>terminus2143</sonar.organization>
+		<sonar.projectKey>Terminus2143_Food-Diary</sonar.projectKey>
+		<!--suppress UnresolvedMavenProperty -->
+		<sonar.login>${SONAR_TOKEN}</sonar.login>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -142,16 +146,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>
-						-XX:+EnableDynamicAgentLoading
-						-Djdk.instrument.traceUsage=true
-					</argLine>
+					<argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Djdk.instrument.traceUsage=true</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>5.1.0.4751</version>
+				<version>3.11.0.3922</version>
 			</plugin>
 		</plugins>
 	</build>

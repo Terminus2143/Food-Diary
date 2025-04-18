@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -75,7 +74,9 @@ public class ProductService {
 
         if (!duplicateNames.isEmpty()) {
             throw new IllegalArgumentException(
-                    String.format("В запросе присутствуют повторяющиеся имена продуктов: %s", duplicateNames)
+                    String.format(
+                            "В запросе присутствуют повторяющиеся имена продуктов: %s",
+                            duplicateNames)
             );
         }
 

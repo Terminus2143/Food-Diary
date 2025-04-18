@@ -7,13 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,22 +80,6 @@ class LogServiceTest {
 
         Files.deleteIfExists(tempFile);
     }
-
-//    @Test
-//    void downloadLogs_validDate_returnsResource() throws IOException {
-//        // Setup test log file
-//        Path logFile = Paths.get(LogService.LOG_FILE_PATH);
-//        Files.createDirectories(logFile.getParent());
-//        if (!Files.exists(logFile)) {
-//            Files.createFile(logFile);
-//        }
-//        Files.writeString(logFile, "15-01-2023 Test log message");
-//
-//        Resource resource = logService.downloadLogs("15-01-2023");
-//        assertNotNull(resource);
-//
-//        Files.deleteIfExists(logFile);
-//    }
 
     @Test
     void downloadLogs_invalidDate_throwsInvalidInputException() {
