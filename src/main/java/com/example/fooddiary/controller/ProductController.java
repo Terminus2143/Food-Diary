@@ -37,7 +37,7 @@ public class ProductController {
         return productService.addProduct(productDto);
     }
 
-    @PostMapping("/bulk")
+    @PostMapping("/products/bulk")
     @Operation(
             summary = "Добавить продукты",
             description = "Добавляет продукты с указанными параметрами")
