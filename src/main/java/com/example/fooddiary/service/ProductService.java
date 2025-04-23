@@ -35,19 +35,22 @@ public class ProductService {
     private final DishRepository dishRepository;
     private final ProductCache productCache;
     private final DishCache dishCache;
+    private final VisitCounterService visitCounterService;
 
     public ProductService(
             ProductRepository productRepository,
             ProductMapper productMapper,
             DishRepository dishRepository,
             ProductCache productCache,
-            DishCache dishCache
+            DishCache dishCache,
+            VisitCounterService visitCounterService
     ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.dishRepository = dishRepository;
         this.productCache = productCache;
         this.dishCache = dishCache;
+        this.visitCounterService = visitCounterService;
     }
 
     public Product addProduct(@RequestBody ProductDto productDto) {
@@ -112,6 +115,7 @@ public class ProductService {
 
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productRepository.findAll();
+        visitCounterService.increment();
         return ResponseEntity.ok(products);
     }
 

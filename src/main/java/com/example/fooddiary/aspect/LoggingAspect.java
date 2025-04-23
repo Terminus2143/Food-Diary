@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -16,31 +15,31 @@ public class LoggingAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Before("execution(* com.example.fooddiary..*(..))")
+    @Before("execution(* com.example.fooddiary..*(..)) && "
+            + "!execution(* com.example.fooddiary.service.VisitCounterService.*(..))")
     public void logBefore(JoinPoint joinPoint) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isInfoEnabled()) {
             logger.info("Выполнение: {}", joinPoint.getSignature().toShortString());
         }
     }
 
-    @AfterReturning(pointcut = "execution(* com.example.fooddiary..*(..))", returning = "result")
+    @AfterReturning(
+            pointcut = "execution(* com.example.fooddiary..*(..))",
+            returning = "result"
+    )
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
-        if (logger.isDebugEnabled()) {
-            if (result instanceof ResponseEntity<?> responseEntity
-                    && (responseEntity.getStatusCode().is4xxClientError()
-                    ||  responseEntity.getStatusCode().is5xxServerError())) {
-                logger.error("Исключение в: {} по причине: {}",
-                    joinPoint.getSignature().toShortString(), result);
-                return;
-            }
+        if (logger.isInfoEnabled()) {
             logger.info("Выполнение: {} с результатом: {}",
                     joinPoint.getSignature().toShortString(), result);
         }
     }
 
-    @AfterThrowing(pointcut = "execution(* com.example.fooddiary..*(..))", throwing = "error")
+    @AfterThrowing(
+            pointcut = "execution(* com.example.fooddiary..*(..))",
+            throwing = "error"
+    )
     public void logAfterThrowing(JoinPoint joinPoint, Throwable error) {
-        if (logger.isDebugEnabled()) {
+        if (logger.isErrorEnabled()) {
             logger.error("Исключение в: {} по причине: {}",
                     joinPoint.getSignature().toShortString(), error.getMessage());
         }
