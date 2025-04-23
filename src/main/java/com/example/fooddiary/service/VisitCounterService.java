@@ -13,6 +13,7 @@ public class VisitCounterService {
     }
 
     public Long getCounter() {
+
         return counter.get();
     }
 }
