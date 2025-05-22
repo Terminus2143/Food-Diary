@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/diary/visits")
+@RequestMapping("/diary")
 public class VisitCounterController {
 
     private final VisitCounterService visitCounterService;

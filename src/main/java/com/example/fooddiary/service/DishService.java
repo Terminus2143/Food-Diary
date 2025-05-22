@@ -9,6 +9,7 @@ import com.example.fooddiary.model.User;
 import com.example.fooddiary.repository.DishRepository;
 import com.example.fooddiary.repository.ProductRepository;
 import com.example.fooddiary.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -152,11 +153,20 @@ public class DishService {
         dishCache.remove((long) dishId);
     }
 
-    public List<Dish> findDishesByProductNameNative(String productName) {
-        List<Dish> dishes = dishRepository.findDishesByProductNameNative(productName);
+    public List<Dish> findDishesByProductName(String productName) {
+        List<Dish> dishes = dishRepository.findDishesByProductName(productName);
         if (dishes.isEmpty()) {
             throw new NotFoundException(DISHES_NOT_FOUND_MESSAGE);
         }
         return dishes;
+    }
+
+    public ResponseEntity<List<Product>> findProductsByDishId(Integer dishId) {
+        Dish dish = dishRepository.findById(dishId)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format(DISH_NOT_FOUND_MESSAGE_ID, dishId)));
+
+        List<Product> products = new ArrayList<>(dish.getProducts());
+        return ResponseEntity.ok(products);
     }
 }

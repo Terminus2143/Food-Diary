@@ -2,6 +2,7 @@ package com.example.fooddiary.controller;
 
 import com.example.fooddiary.dto.DishDto;
 import com.example.fooddiary.model.Dish;
+import com.example.fooddiary.model.Product;
 import com.example.fooddiary.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,9 +80,17 @@ public class DishController {
     @Operation(
             summary = "Найти блюда по имени продукта",
             description = "Извлекает все блюда с указанным продуктом")
-    public ResponseEntity<List<Dish>> findDishesByProductNameNative(
+    public ResponseEntity<List<Dish>> findDishesByProductName(
             @RequestParam String productName
     ) {
-        return ResponseEntity.ok(dishService.findDishesByProductNameNative(productName));
+        return ResponseEntity.ok(dishService.findDishesByProductName(productName));
+    }
+
+    @GetMapping("/dishes/{dishId}/products")
+    @Operation(
+            summary = "Найти продукты по id блюда",
+            description = "Извлекает все продукты указанного блюда")
+    public ResponseEntity<List<Product>> findProductsByDishId(@PathVariable Integer dishId) {
+        return dishService.findProductsByDishId(dishId);
     }
 }

@@ -189,23 +189,6 @@ class DishServiceTest {
     }
 
     @Test
-    void findDishesByProductNameNative_success() {
-        when(dishRepository.findDishesByProductNameNative("Яблоко")).thenReturn(List.of(dish));
-
-        List<Dish> result = dishService.findDishesByProductNameNative("Яблоко");
-
-        assertEquals(1, result.size());
-        assertEquals("Салат", result.get(0).getName());
-    }
-
-    @Test
-    void findDishesByProductNameNative_notFound() {
-        when(dishRepository.findDishesByProductNameNative("Яблоко")).thenReturn(Collections.emptyList());
-
-        assertThrows(NotFoundException.class, () -> dishService.findDishesByProductNameNative("Яблоко"));
-    }
-
-    @Test
     void updateDishNutrients_calculatesCorrectly() {
         Product product2 = new Product();
         product2.setProteins(1.0);

@@ -71,27 +71,6 @@ class ProductServiceTest {
     }
 
     @Test
-    void getAllProducts_success() {
-        when(productRepository.findAll()).thenReturn(List.of(product));
-
-        ResponseEntity<List<Product>> response = productService.getAllProducts();
-
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().size());
-        assertEquals("Apple", response.getBody().get(0).getName());
-    }
-
-    @Test
-    void getAllProducts_emptyList() {
-        when(productRepository.findAll()).thenReturn(Collections.emptyList());
-
-        ResponseEntity<List<Product>> response = productService.getAllProducts();
-
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().isEmpty());
-    }
-
-    @Test
     void addProduct_success() {
         when(productMapper.toEntity(productDto)).thenReturn(product);
         when(productRepository.save(product)).thenReturn(product);

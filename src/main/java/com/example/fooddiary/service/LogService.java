@@ -42,7 +42,7 @@ public class LogService {
     @Async("executor")
     public void createLogs(Long taskId, String date) {
         try {
-            Thread.sleep(20000);
+            Thread.sleep(10000);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             LocalDate logDate = LocalDate.parse(date, formatter);
